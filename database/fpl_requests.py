@@ -1,4 +1,3 @@
-import requests
 import pandas as pd
 import database.mongodb_script as mongodb_script
 from pprint import pprint
@@ -7,7 +6,8 @@ from .models.Teams import Teams, Team
 from .models.Player import Players, Player
 from .models.Fixture import PastFixture, UpcomingFixture, Fixtures
 from .models.Stats import Stats, PlayerStats
-from .constants.constants import BASE_URL,POSITIONS,TEAMS_ABB, element_summary, bootstrap_static
+from .constants.constants import POSITIONS,TEAMS_ABB, element_summary, bootstrap_static
+from security import safe_requests
 
 
 player_to_image = {}
@@ -43,7 +43,7 @@ def get_player_stats(history, stats):
 
 
 def get_fixtures_data(player_id, team_id, fixtures, stats):
-    response = requests.get(element_summary+str(player_id), timeout=60).json()
+    response = safe_requests.get(element_summary+str(player_id), timeout=60).json()
     history = response['history']
     get_upcoming_fixtures(response['fixtures'], team_id, fixtures)
     get_past_fixtures(history, team_id, fixtures)
@@ -83,7 +83,7 @@ def load_images():
 
 
 if __name__ == '__main__':
-    response = requests.get(bootstrap_static, timeout=60).json()
+    response = safe_requests.get(bootstrap_static, timeout=60).json()
     load_images()
     teams = Teams()
     players = Players()
