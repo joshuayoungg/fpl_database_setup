@@ -43,7 +43,7 @@ def get_player_stats(history, stats):
 
 
 def get_fixtures_data(player_id, team_id, fixtures, stats):
-    response = requests.get(element_summary+str(player_id)).json()
+    response = requests.get(element_summary+str(player_id), timeout=60).json()
     history = response['history']
     get_upcoming_fixtures(response['fixtures'], team_id, fixtures)
     get_past_fixtures(history, team_id, fixtures)
@@ -83,7 +83,7 @@ def load_images():
 
 
 if __name__ == '__main__':
-    response = requests.get(bootstrap_static).json()
+    response = requests.get(bootstrap_static, timeout=60).json()
     load_images()
     teams = Teams()
     players = Players()
