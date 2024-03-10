@@ -61,8 +61,7 @@ def get_from_mongo_db():
 def get_player_data(response,players,fixtures,stats):
     players_data = response['elements']
     for data in players_data:
-        status = data['status']
-        if status != 'u':
+        if (status := data['status']) != 'u':
             player_image = player_to_image[data['id']]
             position = get_player_position(data['element_type'])
             player = Player(data,position,player_image)
