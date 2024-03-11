@@ -3,36 +3,27 @@ class Fixtures:
         self.past_fixtures = []
         self.upcoming_fixtures = []
 
-    @property
-    def get_past_fixture(self,past_fixture):
-        key = past_fixture.fixture_key
+    def get_past_fixture(self,key):
         for fixture in self.past_fixtures:
-            if fixture.key == key:
+            if fixture.fixture_key == key:
                 return True
         return False
     
-    @property
-    def get_upcoming_fixture(self,upcoming_fixture):
-        key = upcoming_fixture.fixture_key
-        for fixture in self.past_fixtures:
-            if fixture.key == key:
+    def get_upcoming_fixture(self,key):
+        for fixture in self.upcoming_fixtures:
+            if fixture.fixture_key == key:
                 return True
         return False
-
     
-    @property
     def add_past_fixtures(self,past_fixture):
-        is_added = self.get_past_fixture(past_fixture)
-        if not is_added:
+        if is_added := self.get_past_fixture(past_fixture.fixture_key):
             return
         self.past_fixtures.append(past_fixture)
     
-    @property
     def add_upcoming_fixtures(self,upcoming_fixture):
-        is_added = self.get_past_fixture(upcoming_fixture)
-        if not is_added:
+        if is_added := self.get_upcoming_fixture(upcoming_fixture.fixture_key):
             return
-        self.upcoming_fixture.append(upcoming_fixture)
+        self.upcoming_fixtures.append(upcoming_fixture)
 
 
 
