@@ -94,12 +94,13 @@ def convert_to_dict_list(obj):
                         for attr in dir(item) if not attr.startswith('__')})
     return obj_dict
 
+
 def convert_team_to_dict_list(teams):
     obj_dict = []
     for item in teams:
 
         team_dict = ({attr: getattr(item, attr)
-                        for attr in dir(item) if not attr.startswith('__')})
+                      for attr in dir(item) if not attr.startswith('__')})
         team_dict['players'] = [player.__dict__ for player in item.players]
         obj_dict.append(team_dict)
     return obj_dict
