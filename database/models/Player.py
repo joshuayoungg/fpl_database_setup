@@ -2,13 +2,11 @@ class Players:
     def __init__(self):
         self.players = []
 
-    @property
     def get_player(self,id):
         for player in self.players:
             if player.id == id:
                 return player
 
-    @property
     def add_player(self,player):
         self.players.append(player)
 
