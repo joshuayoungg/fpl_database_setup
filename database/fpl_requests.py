@@ -23,7 +23,7 @@ def get_player_position(element_type):
 
 def get_upcoming_fixtures(upcoming, team_id, fixtures):
     for data in upcoming:
-        if(not data['kickoff_time']):
+        if (not data['kickoff_time']):
             continue
         upcoming_fixture = UpcomingFixture(data, team_id)
         fixtures.add_upcoming_fixtures(upcoming_fixture)
@@ -31,7 +31,7 @@ def get_upcoming_fixtures(upcoming, team_id, fixtures):
 
 def get_past_fixtures(history, team_id, fixtures):
     for data in history:
-        past_fixture = PastFixture(data,team_id)
+        past_fixture = PastFixture(data, team_id)
         fixtures.add_past_fixtures(past_fixture)
 
 
@@ -43,22 +43,24 @@ def get_player_stats(history, stats, player_id):
 
 
 def get_fixtures_and_stats(player_id, team_id, fixtures, stats):
-    response = safe_requests.get(element_summary+str(player_id), timeout=60).json()
+    response = safe_requests.get(
+        element_summary+str(player_id), timeout=60).json()
     history = response['history']
     get_upcoming_fixtures(response['fixtures'], team_id, fixtures)
     get_past_fixtures(history, team_id, fixtures)
     stats = get_player_stats(history, stats, player_id)
     return stats
 
-        
+
 def add_to_mongo_db(items):
     mongodb_script.mongo_db_operations('add', items)
+
 
 def get_from_mongo_db():
     return mongodb_script.mongo_db_operations('get')
 
 
-def get_player_data(response,players,fixtures,stats):
+def get_player_data(response, players, fixtures, stats):
     players_data = response['elements']
     for data in players_data:
         if data['status'] != 'u':
@@ -67,9 +69,10 @@ def get_player_data(response,players,fixtures,stats):
             except Exception:
                 player_image = 'Photo-Missing'
             position = get_player_position(data['element_type'])
-            player = Player(data,position,player_image)
-            get_fixtures_and_stats(player.id,player.team_id,fixtures, stats)
+            player = Player(data, position, player_image)
+            get_fixtures_and_stats(player.id, player.team_id, fixtures, stats)
             players.add_player(player)
+
 
 def get_team_data(response, teams):
     fpl_teams_data = response['teams']
@@ -77,10 +80,30 @@ def get_team_data(response, teams):
         team = Team(data)
         teams.teams.append(team)
 
+
 def load_images():
     df = pd.read_excel('players.xlsx', sheet_name=0).values.tolist()
     for data in df:
         player_to_image[data[0]] = data[3]
+
+
+def convert_to_dict_list(obj):
+    obj_dict = []
+    for item in obj:
+        obj_dict.append({attr: getattr(item, attr)
+                        for attr in dir(item) if not attr.startswith('__')})
+    return obj_dict
+
+
+def convert_team_to_dict_list(teams):
+    obj_dict = []
+    for item in teams:
+
+        team_dict = ({attr: getattr(item, attr)
+                      for attr in dir(item) if not attr.startswith('__')})
+        team_dict['players'] = [player.__dict__ for player in item.players]
+        obj_dict.append(team_dict)
+    return obj_dict
 
 
 if __name__ == '__main__':
@@ -91,10 +114,6 @@ if __name__ == '__main__':
     fixtures = Fixtures()
     stats = Stats()
     get_team_data(response, teams)
-    get_player_data(response,players,fixtures,stats)
-    # add_to_mongo_db([teams.teams, players.players, fixtures.past_fixtures, fixtures.upcoming_fixtures,stats.player_stats])
-    # items = get_from_mongo_db()
-    # get_gameweek_stats(items)
-    # add_to_mongo_db([gameweek_stats])
-
-#TODO: setup adding to mongodb
+    get_player_data(response, players, fixtures, stats)
+    add_to_mongo_db([('teams', convert_to_dict_list(teams.teams)), ('players', convert_to_dict_list(players.players)), ('past_fixtures', convert_to_dict_list(fixtures.past_fixtures)),
+                    ('upcoming_fixtures', convert_to_dict_list(fixtures.upcoming_fixtures)), ('stats', convert_to_dict_list(stats.player_stats))])

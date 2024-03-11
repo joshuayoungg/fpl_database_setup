@@ -32,7 +32,7 @@ class PastFixture():
         self.team = team_id
         self.gameweek = params.get('round')
         self.kickoff_time = params.get('kickoff_time')
-        self.was_home = params.get('was_home') == 'true'
+        self.was_home = params.get('was_home')
         self.opponent_team = params.get('opponent_team')
         self.home_team_score = params.get('team_h_score')
         self.away_team_score = params.get('team_a_score')
