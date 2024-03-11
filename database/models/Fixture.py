@@ -16,14 +16,12 @@ class Fixtures:
         return False
     
     def add_past_fixtures(self,past_fixture):
-        is_added = self.get_past_fixture(past_fixture.fixture_key)
-        if is_added:
+        if is_added := self.get_past_fixture(past_fixture.fixture_key):
             return
         self.past_fixtures.append(past_fixture)
     
     def add_upcoming_fixtures(self,upcoming_fixture):
-        is_added = self.get_upcoming_fixture(upcoming_fixture.fixture_key)
-        if is_added:
+        if is_added := self.get_upcoming_fixture(upcoming_fixture.fixture_key):
             return
         self.upcoming_fixtures.append(upcoming_fixture)
 
