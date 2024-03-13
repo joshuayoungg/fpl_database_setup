@@ -10,6 +10,7 @@ class PlayerStats:
     def __init__(self, params, team_id):
         self.team = team_id
         self.player_id = params.get('element')
+        self.gameweek = params.get('round')
         self.opponent = params.get('opponent_team')
         self.total_points = params.get('total_points', 0)
         self.was_home = params.get('was_home') == 'true'
